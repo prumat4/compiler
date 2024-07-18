@@ -1,9 +1,10 @@
 mod lexer;
 mod parser;
 
+use lexer::lexer::Lexer;
+
 use std::env;
 use std::fs;
-use std::error::Error;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -13,6 +14,8 @@ fn main() {
     }
 
     let content = fs::read_to_string(args[1].clone()).expect("No such file");
-    println!("{}", content);
+    dbg!(&content);
 
+    let lexer = Lexer::new(content);
+    dbg!(&lexer);
 }

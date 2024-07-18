@@ -1,21 +1,18 @@
+#[derive(Debug)]
 pub struct Lexer {
     input: String,
-    input_size: u32,
-    pos: u32,
-    read_pos: u32,
+    pos: usize,
+    read_pos: usize,
     character: char,
 }
 
 impl Lexer {
-    fn new(content: String) -> Lexer {
+    pub fn new(content: String) -> Lexer {
         Lexer {
             input: content.clone(),
-            input_size: content.len() as u32,
             pos: 0,
             read_pos: 0,
             character: ' ',
         }
     }
-
-    
 }
