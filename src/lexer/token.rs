@@ -1,34 +1,50 @@
+#[derive(PartialEq, Debug)]
 pub enum TokenType {
+    Ident(String),
+    Int(String),
+
     Illegal,
     Eof,
-    Ident,
-    Int,
     Assign,
-    Plus,
-    Minus,
+
     Bang,
+    Dash,
+    ForwardSlash,
     Asterisk,
-    Slash,
-    LessThen,
-    GreaterThen,
     Equal,
     NotEqual,
+    LessThan,
+    GreaterThan,
+
+    Plus,
     Comma,
     Semicolon,
-    LParen,
-    RParen,
+    Lparen,
+    Rparen,
     LSquirly,
     RSquirly,
+
     Function,
     Let,
-    True,
-    False,
+
     If,
     Else,
     Return,
+    True,
+    False,
 }
 
-struct Token {
+#[derive(PartialEq, Debug)]
+pub struct Token {
     token_type: TokenType,
-    literal: char,
+    literal: u8,
+}
+
+impl Token {
+    pub fn new(token_type: TokenType, literal: u8) -> Token {
+        Token {
+            token_type,
+            literal,
+        }
+    }
 }
