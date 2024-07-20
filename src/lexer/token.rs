@@ -1,5 +1,6 @@
+#[allow(dead_code)]
 #[derive(PartialEq, Debug)]
-pub enum TokenType {
+pub enum Token {
     Ident(String),
     Int(String),
 
@@ -32,19 +33,4 @@ pub enum TokenType {
     Return,
     True,
     False,
-}
-
-#[derive(PartialEq, Debug)]
-pub struct Token {
-    token_type: TokenType,
-    literal: u8,
-}
-
-impl Token {
-    pub fn new(token_type: TokenType, literal: u8) -> Token {
-        Token {
-            token_type,
-            literal,
-        }
-    }
 }

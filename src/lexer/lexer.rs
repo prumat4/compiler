@@ -1,4 +1,4 @@
-use super::token::{Token, TokenType};
+use super::token::Token;
 use anyhow::Result;
 
 #[derive(Debug)]
@@ -23,7 +23,8 @@ impl Lexer {
         lexer
     }
 
-    pub fn read_char(&mut self) {
+    #[allow(dead_code)]
+    fn read_char(&mut self) {
         if self.read_pos >= self.input_size {
             self.ch = 0;
         } else {
@@ -33,6 +34,7 @@ impl Lexer {
         self.read_pos += 1;
     }
 
+    #[allow(dead_code)]
     fn peek(&self) -> u8 {
         if self.read_pos >= self.input.len() {
             return 0;
@@ -41,12 +43,14 @@ impl Lexer {
         }
     }
 
+    #[allow(dead_code)]
     fn skip_whitespace(&mut self) {
         while self.ch.is_ascii_whitespace() {
             self.read_char();
         }
     }
 
+    #[allow(dead_code)]
     fn read_ident(&mut self) -> String {
         let pos = self.pos;
         while self.ch.is_ascii_alphabetic() || self.ch == b'_' {
@@ -55,6 +59,7 @@ impl Lexer {
         return String::from_utf8_lossy(&self.input[pos..self.pos]).to_string();
     }
 
+    #[allow(dead_code)]
     fn read_int(&mut self) -> String {
         let pos = self.pos;
         while self.ch.is_ascii_digit() {
@@ -63,89 +68,58 @@ impl Lexer {
         return String::from_utf8_lossy(&self.input[pos..self.pos]).to_string();
     }
 
+    #[allow(dead_code)]
     pub fn next_token(&mut self) -> Result<Token> {
         self.skip_whitespace();
 
         let token = match self.ch {
-            b'{' => Token::new(TokenType::LSquirly, self.ch),
-            b'}' => Token::new(TokenType::RSquirly, self.ch),
-            b'(' => Token::new(TokenType::Lparen, self.ch),
-            b')' => Token::new(TokenType::Rparen, self.ch),
-            b',' => Token::new(TokenType::Comma, self.ch),
-            b';' => Token::new(TokenType::Semicolon, self.ch),
-            b'+' => Token::new(TokenType::Plus, self.ch),
-            b'-' => Token::new(TokenType::Dash, self.ch),
+            b'{' => Token::LSquirly,
+            b'}' => Token::RSquirly,
+            b'(' => Token::Lparen,
+            b')' => Token::Rparen,
+            b',' => Token::Comma,
+            b';' => Token::Semicolon,
+            b'+' => Token::Plus,
+            b'-' => Token::Dash,
             b'!' => {
                 if self.peek() == b'=' {
                     self.read_char();
-                    Token::new(TokenType::NotEqual, b'!')
+                    Token::NotEqual
                 } else {
-                    Token::new(TokenType::Bang, self.ch)
+                    Token::Bang
                 }
-            }
-            b'>' => Token::new(TokenType::GreaterThan, self.ch),
-            b'<' => Token::new(TokenType::LessThan, self.ch),
-            b'*' => Token::new(TokenType::Asterisk, self.ch),
-            b'/' => Token::new(TokenType::ForwardSlash, self.ch),
+            },
+            b'>' => Token::GreaterThan,
+            b'<' => Token::LessThan,
+            b'*' => Token::Asterisk,
+            b'/' => Token::ForwardSlash,
             b'=' => {
                 if self.peek() == b'=' {
                     self.read_char();
-                    Token::new(TokenType::Equal, b'=')
+                    Token::Equal
                 } else {
-                    Token::new(TokenType::Assign, self.ch)
+                    Token::Assign
                 }
-            }
+            },
             b'a'..=b'z' | b'A'..=b'Z' | b'_' => {
                 let ident = self.read_ident();
                 return Ok(match ident.as_str() {
-                    "fn" => Token::new(TokenType::Function, self.ch),
-                    "let" => Token::new(TokenType::Let, self.ch),
-                    "if" => Token::new(TokenType::If, self.ch),
-                    "false" => Token::new(TokenType::False, self.ch),
-                    "true" => Token::new(TokenType::True, self.ch),
-                    "return" => Token::new(TokenType::Return, self.ch),
-                    "else" => Token::new(TokenType::Else, self.ch),
-                    _ => Token::new(TokenType::Ident(ident), self.ch),
+                    "fn" => Token::Function,
+                    "let" => Token::Let,
+                    "if" => Token::If,
+                    "false" => Token::False,
+                    "true" => Token::True,
+                    "return" => Token::Return,
+                    "else" => Token::Else,
+                    _ => Token::Ident(ident),
                 });
-            }
-            b'0'..=b'9' => return Ok(Token::new(TokenType::Int(self.read_int()), self.ch)),
-            0 => Token::new(TokenType::Eof, self.ch),
-            _ => unreachable!("no monkey program should contain these characters"),
+            },
+            b'0'..=b'9' => return Ok(Token::Int(self.read_int())),
+            0 => Token::Eof,
+            _ => unreachable!("no monkey program should contain these characters and you should feel bad about yourself")
         };
 
         self.read_char();
         Ok(token)
     }
-}
-
-#[cfg(test)]
-mod test {
-    // use super::{Token, TokenType};
-    // use super::Lexer;
-    // use anyhow::Result;
-
-    // #[test]
-    // fn test_next_token() -> Result<()> {
-    //     let input = "=+(){},;";
-    //     let mut lexer = Lexer::new(input.into());
-
-    //     let tokens = vec![
-    //         Token::new(TokenType::Assign, b'='),
-    //         Token::new(TokenType::Plus, b'+'),
-    //         Token::new(TokenType::Lparen, b'('),
-    //         Token::new(TokenType::Rparen, b')'),
-    //         Token::new(TokenType::LSquirly, b'{'),
-    //         Token::new(TokenType::RSquirly, b'}'),
-    //         Token::new(TokenType::Comma, b','),
-    //         Token::new(TokenType::Semicolon, b';'),
-    //     ];
-
-    //     for token in tokens {
-    //         let next_token = lexer.next_token()?;
-    //         println!("expected: {:?}, received {:?}", token, next_token);
-    //         assert_eq!(token, next_token);
-    //     }
-
-    //     return Ok(());
-    // }
 }
