@@ -16,8 +16,6 @@ fn main() {
     let content = fs::read_to_string(args[1].clone()).expect("No such file");
     dbg!(&content);
 
-    // let bytes = content.as_bytes();
-
     let lexer = Lexer::new(content.into());
-    dbg!(&lexer);
+    // dbg!(&lexer);
 }
