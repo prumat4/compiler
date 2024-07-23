@@ -23,7 +23,6 @@ impl Lexer {
         lexer
     }
 
-    #[allow(dead_code)]
     fn read_char(&mut self) {
         if self.read_pos >= self.input_size {
             self.ch = 0;
@@ -34,7 +33,6 @@ impl Lexer {
         self.read_pos += 1;
     }
 
-    #[allow(dead_code)]
     fn peek(&self) -> u8 {
         if self.read_pos >= self.input.len() {
             return 0;
@@ -43,14 +41,12 @@ impl Lexer {
         }
     }
 
-    #[allow(dead_code)]
     fn skip_whitespace(&mut self) {
         while self.ch.is_ascii_whitespace() {
             self.read_char();
         }
     }
 
-    #[allow(dead_code)]
     fn read_ident(&mut self) -> String {
         let pos = self.pos;
         while self.ch.is_ascii_alphabetic() || self.ch == b'_' {
@@ -59,7 +55,6 @@ impl Lexer {
         return String::from_utf8_lossy(&self.input[pos..self.pos]).to_string();
     }
 
-    #[allow(dead_code)]
     fn read_int(&mut self) -> String {
         let pos = self.pos;
         while self.ch.is_ascii_digit() {
@@ -68,8 +63,7 @@ impl Lexer {
         return String::from_utf8_lossy(&self.input[pos..self.pos]).to_string();
     }
 
-    #[allow(dead_code)]
-    pub fn next_token(&mut self) -> Result<Token> {
+    pub fn next_token(&mut self) -> Token {
         self.skip_whitespace();
 
         let token = match self.ch {
@@ -103,7 +97,7 @@ impl Lexer {
             },
             b'a'..=b'z' | b'A'..=b'Z' | b'_' => {
                 let ident = self.read_ident();
-                return Ok(match ident.as_str() {
+                return match ident.as_str() {
                     "fn" => Token::Function,
                     "let" => Token::Let,
                     "if" => Token::If,
@@ -112,14 +106,15 @@ impl Lexer {
                     "return" => Token::Return,
                     "else" => Token::Else,
                     _ => Token::Ident(ident),
-                });
+                };
             },
-            b'0'..=b'9' => return Ok(Token::Int(self.read_int())),
+            b'0'..=b'9' => return Token::Int(self.read_int()),
             0 => Token::Eof,
             _ => unreachable!("no monkey program should contain these characters and you should feel bad about yourself")
         };
 
         self.read_char();
-        Ok(token)
+        token
     }
+
 }

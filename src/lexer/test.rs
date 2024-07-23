@@ -24,11 +24,10 @@ fn get_next_token() -> Result<()> {
     ];
 
     for token in tokens {
-        let next_token = lexer.next_token()?;
+        let next_token = lexer.next_token();
         println!("expected: {:?}, received {:?}", token, next_token);
         assert_eq!(token, next_token);
     }
-
 
     return Ok(());
 }
@@ -138,7 +137,7 @@ fn get_next_complete() -> Result<()> {
     ];
 
     for token in tokens {
-        let next_token = lex.next_token()?;
+        let next_token = lex.next_token();
         println!("expected: {:?}, received {:?}", token, next_token);
         assert_eq!(token, next_token);
     }
